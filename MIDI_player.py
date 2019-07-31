@@ -1,68 +1,56 @@
+#################################################################
+####This code listens for an input on a port and plays a specific MIDI file depending on the input
+
+
 import mido
 from mido import MidiFile, MetaMessage
 from mido.ports import MultiPort
-
-mid = MidiFile("Bee_Gees_-_Stayin_Alive-Voice.mid")
-outport = mido.open_output()
-
-#Show all MIDI Data
-for i, track in enumerate(mid.tracks):
-    print('Track {}: {}'.format(i, track.name))
-    for msg in track:
-        print(msg)
-
-#Play all MIDI data
-for msg in MidiFile("Movie_Themes_-_Jurassic_Park.mid").play():
-    outport.send(msg)
-    phrase = input("Is it working?")
-
-outport.panic()
+#Open Input
+port = mido.open_input('nanoKEY2 0')
+#Open Output
+outport = mido.open_output('Microsoft GS Wavetable Synth 0')
+#Load MIDI Files
+SMF_1 = MidiFile("Bee_Gees_-_Stayin_Alive-Voice.mid")
+SMF_2 = MidiFile("Movie_Themes_-_Jurassic_Park.mid")
 
 
+#Handler definition
+def play_SMF(SMF_file):
+    print('Made it to play_SMF')
+    global outport
+    outport.close()
+    outport = mido.open_output('Microsoft GS Wavetable Synth 0')    
+    #for msg in MidiFile("Bee_Gees_-_Stayin_Alive-Voice.mid").play():
+    for msg in SMF_file.play():
+        outport.send(msg)
+
+#Callback definition
+def route_midi(message):
+    if message.type == 'note_on':
+        if message.note == 72:
+            print('Key 72')
+            play_SMF(SMF_1)
+        elif message.note == 71:
+            print('Key 71')
+            play_SMF(SMF_2)
+        
+           
+
+ 
+port.callback = route_midi
+
+        
 
 
-for msg in port:
-    while (msg.control == 127)
-        for msg in MidiFile("Movie_Themes_-_Jurassic_Park.mid").play():
+
+
+#CRAP
+for msg in SMF_1.play():
         outport.send(msg)
 
 
-#works
-for message in port:
-    print(message)
-    
-
-#works
-for message in port:
-    #print(message)
-    if message.type == 'note_on' and message.note == 72:
-        print(message)
-        for msg in MidiFile("Movie_Themes_-_Jurassic_Park.mid").play():
-            outport.send(msg)
-
-
-for message in port:
-    #print(message)
-    if message.type == 'note_on' and message.note == 72:
-        print(message)
-        for msg in MidiFile("Movie_Themes_-_Jurassic_Park.mid").play():
-            outport.send(msg)
-            if (port.poll() != 'None') :
-                message=port.receive()
-                print(message)
-           
-
-
-
-
-
-
-#IO
-mido.get_output_names()
-mido.get_input_names()
-port = mido.open_input('Midi Fighter Twister 0')
-port.close()
-port = mido.open_input('nanoKEY2 0')
-outport = mido.open_output('Microsoft GS Wavetable Synth 0')
-
-with mido.open_input('nanoKEY2 0') as port
+#SCRAP
+def route_midi(message):
+    if message.type == 'note_on':
+        if message.note == 72:
+            print(message.note)
